@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1031431771420",
+    "project_id": "movieassignment-56caf",
+    "storage_bucket": "movieassignment-56caf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031431771420:android:15f1324a27d5eb0f1416d9",
+        "android_client_info": {
+          "package_name": "com.example.movieassignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEM6Vk4Zf7dL3dU-ZtKNwDGuyHzfuu5b0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
