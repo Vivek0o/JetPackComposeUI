@@ -6,32 +6,48 @@ import com.example.movieassignment.data.repositories.MovieRepository
 
 class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
     val movieToShow = MutableLiveData<List<Movie>>(emptyList())
-    val queryString = MutableLiveData<String>("")
+    val isInSearchMode : MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _queryString = MutableLiveData("")
+    val queryString: LiveData<String> get() = _queryString
     private val _feedbackMessage = MutableLiveData<String>()
     val feedbackMessage: LiveData<String> get() = _feedbackMessage
 
     init {
-        loadAllMovies()
+        fetchInitialMovies()
     }
 
     fun loadAllMovies() {
+        movieLoadUtil()
+    }
+
+    fun hasMoreDate() = repository.hasMoreData()
+
+    fun setSearchQuery(query: String) {
+        _queryString.value = query
+        if (query.length >= 3) {
+            isInSearchMode.value = true
+            repository.resetCurrentFile()
+            val results = repository.searchMovie(query)
+            if (results.isNotEmpty()) {
+                _feedbackMessage.value = "Movie Found"
+            } else {
+                _feedbackMessage.value = "No movies found for the query."
+            }
+            movieToShow.value = results
+        } else {
+            isInSearchMode.value = false
+            repository.resetCurrentFile()
+            movieToShow.value = repository.fetchMoviesFromAsset()
+        }
+    }
+
+    private fun fetchInitialMovies() {
         movieToShow.value = repository.fetchMoviesFromAsset()
     }
 
-    fun setSearchQuery(query: String) {
-        val allMovies = repository.fetchMoviesFromAsset()
-        if (query.length >= 3) {
-            queryString.value = query
-            movieToShow.value = allMovies.filter {
-                it.name.contains(query, ignoreCase = true)
-            }
-            if (movieToShow.value.isNullOrEmpty()) {
-                _feedbackMessage.value = "No movies found for the query."
-            } else {
-                _feedbackMessage.value = "Empty"
-            }
-        } else {
-           // TODO
-        }
+    private fun movieLoadUtil() {
+        val newMovies = repository.fetchMoviesFromAsset()
+        val currentMovies = movieToShow.value ?: emptyList()
+        movieToShow.value = currentMovies + newMovies
     }
 }

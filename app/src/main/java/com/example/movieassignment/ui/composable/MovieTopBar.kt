@@ -80,7 +80,7 @@ fun MovieTopBar(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
-                alpha = 0.8f
+                alpha = 1f
 
             )
             TopAppBar(

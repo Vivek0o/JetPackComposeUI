@@ -1,5 +1,6 @@
 package com.example.movieassignment.ui.composable
 
+import MovieViewModel
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -8,8 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,12 +31,14 @@ import com.example.movieassignment.data.models.Movie
 import com.example.movieassignment.utils.TextUtils
 
 @Composable
-fun MoviesGridView(movies: List<Movie>, query: String) {
+fun MoviesGridView(movies: List<Movie>, query: String, viewModel: MovieViewModel) {
     val orientation = LocalConfiguration.current.orientation
     val columns = if (orientation == Configuration.ORIENTATION_LANDSCAPE) 7 else 3
     val context = LocalContext.current
     val density = LocalDensity.current.density
     val paddingInDp = 30 / density
+    val shouldLoadMore = remember { mutableStateOf(false) }
+    val inSearchMode by viewModel.isInSearchMode.observeAsState(false)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),
@@ -37,6 +46,16 @@ fun MoviesGridView(movies: List<Movie>, query: String) {
     ) {
         items(movies?.size ?: 0) { index ->
             MovieItem(movie = movies[index], context, density, query)
+            if (!inSearchMode && viewModel.hasMoreDate() && index >= movies.size - 5) {
+                shouldLoadMore.value = true
+            }
+        }
+    }
+
+    if (shouldLoadMore.value) {
+        LaunchedEffect(shouldLoadMore) {
+            viewModel.loadAllMovies()
+            shouldLoadMore.value = false
         }
     }
 }
