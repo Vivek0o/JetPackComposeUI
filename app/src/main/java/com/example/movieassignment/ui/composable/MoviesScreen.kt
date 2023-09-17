@@ -19,7 +19,7 @@ fun MoviesScreen(viewModel: MovieViewModel = viewModel()) {
 
     Column {
         MovieTopBar(
-            title = "Romantic Movies",
+            title = viewModel.fetchPageTitle(),
             onQueryChange = { query ->
                 if (query.isEmpty() && feedbackMessage == "Initial") {
                     viewModel.loadAllMovies()

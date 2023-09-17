@@ -23,15 +23,21 @@ class MovieRepository(private val context: Context) {
 
     fun fetchMoviesFromAsset(): List<Movie> {
         if (currentFile > maxFile) return emptyList()
-        val filename: String = "CONTENTLISTINGPAGE-PAGE${currentFile}.json"
+
+        val filename = "CONTENTLISTINGPAGE-PAGE${currentFile}.json"
         currentFile++
         val jsonString: String = loadJSONFromAsset(filename)
-
         val pageResponse = Gson().fromJson(jsonString, MoviePageResponse::class.java)
-        val movieList = pageResponse.page.`content-items`.content
-        return movieList
+
+        return pageResponse.page.`content-items`.content
     }
 
+    /*
+    * This method is used to search movie based on query.
+    *
+    * @param: query        : the current query.
+    * @return: List<Movie> : returns the list of movies if found, else empty-list.
+     */
     fun searchMovie(query: String): List<Movie> {
         val results = mutableListOf<Movie>()
 
@@ -46,6 +52,14 @@ class MovieRepository(private val context: Context) {
 
         }
         return results
+    }
+
+    fun getTitle() : String {
+        val filename = "CONTENTLISTINGPAGE-PAGE1.json"
+        val jsonString: String = loadJSONFromAsset(filename)
+        val pageResponse = Gson().fromJson(jsonString, MoviePageResponse::class.java)
+
+        return pageResponse.page.title
     }
 
     fun hasMoreData() = currentFile <= maxFile

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +23,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,6 +52,7 @@ fun MoviesGridView(movies: List<Movie>, query: String, viewModel: MovieViewModel
         }
     }
 
+    // Checks if the current items is about to end, to load the next item or json file.
     if (shouldLoadMore.value) {
         LaunchedEffect(shouldLoadMore) {
             viewModel.loadAllMovies()
@@ -59,7 +60,14 @@ fun MoviesGridView(movies: List<Movie>, query: String, viewModel: MovieViewModel
         }
     }
 }
-
+/*
+* This method is used to shown the fetched data over the screen.
+*
+* @param: movie   : Fetched movie items to be shown over screen.
+* @param: context : The current context.
+* @param: density : density to convert pixel into dp.
+* @param: query   : any query if searched to highlight text else null
+ */
 @Composable
 fun MovieItem(movie: Movie, context: Context, density: Float, query: String) {
     val imageResourceId = painterResource(id = getDrawableIdByName(movie.`poster-image`, context))
@@ -80,27 +88,25 @@ fun MovieItem(movie: Movie, context: Context, density: Float, query: String) {
             contentDescription = movie.name,
             modifier = Modifier.size(width = 120.dp, height = 160.dp)
         )
-        if (query == "") {
-            Text(
-                text = movie.name,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = (density / 24).dp),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,  // Append '...' when the text exceeds the space
-                color = Color.White
-            )
-        } else {
-            Text(
-                text = highlightText,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = (density / 24).dp),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,  // Append '...' when the text exceeds the space
-            )
-        }
+        Text(
+            text = if (query.isEmpty()) AnnotatedString(movie.name) else highlightText,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = (density / 24).dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,  // Append '...' when the text exceeds the space
+            color = Color.White
+        )
     }
 }
 
+/*
+* This method is used to provide image resource based on
+* poster name else default image resource.
+*
+* @param: poster  : the name of poster fetched from Json file.
+* @param: context : The current context.
+* @return: Int    : returns the image resource id.
+ */
 @Composable
 fun getDrawableIdByName(poster: String, context: Context): Int {
     val cleanedResourceName = poster.removeSuffix(".jpg")
