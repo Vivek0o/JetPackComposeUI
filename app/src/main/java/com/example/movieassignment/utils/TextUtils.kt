@@ -5,6 +5,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import java.util.regex.Pattern
 
+/* Util object for highlighting the movie name when in search mode*/
 object TextUtils {
     fun buildHighlightedText(
         fullText: String,

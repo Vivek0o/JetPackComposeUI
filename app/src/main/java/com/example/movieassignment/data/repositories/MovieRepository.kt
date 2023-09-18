@@ -9,8 +9,9 @@ import java.io.InputStream
 
 class MovieRepository(private val context: Context) {
 
-    private var currentFile = 1
-    private val maxFile: Int
+    var currentFile = 1
+    var filename = "CONTENTLISTINGPAGE-PAGE1.json"
+    val maxFile: Int
     init {
         maxFile = try {
             context.assets.list("")?.count {
@@ -42,7 +43,7 @@ class MovieRepository(private val context: Context) {
         val results = mutableListOf<Movie>()
 
         for (i in 1..maxFile) {
-            val filename = "CONTENTLISTINGPAGE-PAGE${i}.json"
+            filename = getFileName(i)
             val movies = loadJSONFromAsset(filename)
             val pageResponse = Gson().fromJson(movies, MoviePageResponse::class.java)
             val movieList = pageResponse?.page?.`content-items`?.content
@@ -54,8 +55,11 @@ class MovieRepository(private val context: Context) {
         return results
     }
 
+    fun getFileName(index: Int): String {
+        return "CONTENTLISTINGPAGE-PAGE${index}.json"
+    }
+
     fun getTitle() : String {
-        val filename = "CONTENTLISTINGPAGE-PAGE1.json"
         val jsonString: String = loadJSONFromAsset(filename)
         val pageResponse = Gson().fromJson(jsonString, MoviePageResponse::class.java)
 
@@ -66,7 +70,7 @@ class MovieRepository(private val context: Context) {
 
     fun resetCurrentFile() { currentFile = 1}
 
-    private fun loadJSONFromAsset(filename: String): String {
+    fun loadJSONFromAsset(filename: String): String {
         return try {
             val inputStream: InputStream = context.assets.open(filename)
             val size: Int = inputStream.available()

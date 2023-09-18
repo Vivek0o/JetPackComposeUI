@@ -17,12 +17,14 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
         fetchInitialMovies()
     }
 
+    /* This method is required to load the next json file, when user reach the bottom */
     fun loadAllMovies() {
         val newMovies = repository.fetchMoviesFromAsset()
         val currentMovies = movieToShow.value ?: emptyList()
         _movieToShow.value = currentMovies + newMovies
     }
 
+    /* It checks for, if more data is available */
     fun hasMoreDate() = repository.hasMoreData()
 
     /*
@@ -56,7 +58,7 @@ class MovieViewModel(private val repository: MovieRepository) : ViewModel() {
         return repository.getTitle()
     }
 
-    private fun fetchInitialMovies() {
+    fun fetchInitialMovies() {
         _movieToShow.value = repository.fetchMoviesFromAsset()
     }
 }

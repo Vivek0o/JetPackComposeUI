@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+/* This class will be called from MainActivity to show the complete UI. */
 @Composable
 fun MoviesScreen(viewModel: MovieViewModel = viewModel()) {
     val moviesToShow by viewModel.movieToShow.observeAsState(emptyList())

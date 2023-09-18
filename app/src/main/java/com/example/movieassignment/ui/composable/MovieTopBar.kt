@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.movieassignment.R
 
+/* This class holds the Top bar UI, handling search mode and default mode both. */
 @Composable
 fun MovieTopBar(
     title: String,
